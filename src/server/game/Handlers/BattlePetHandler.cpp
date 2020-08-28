@@ -401,3 +401,99 @@ void WorldSession::HandleBattlePetSummonCompanion(WorldPacket& recvData)
         }
     }
 }
+
+void WorldSession::HandlePetBattleRequestWild(WorldPacket& recvData)
+{
+    float x1,y1,z1;
+    float x2,y2,z2;
+    float x3,y3,z3;
+    float BattleFacing;
+    int32 LocationResult = -1;
+    ObjectGuid TargetGUID;
+
+    //PlayerPositions1
+    recvData >> x1;
+    recvData >> z1;
+    recvData >> y1;
+    SF_LOG_DEBUG("network", "CMSG_PETBATTLE_REQUEST_WILD: x1(%f), y1(%f), z1(%f)", x1, y1, z1);
+    //PlayerPositions2
+    recvData >> x2;
+    recvData >> z2;
+    recvData >> y2;
+    SF_LOG_DEBUG("network", "CMSG_PETBATTLE_REQUEST_WILD: x2(%f), y2(%f), z2(%f)", x2, y2, z2);
+
+    //BattleOrigin
+    recvData >> z3;
+    recvData >> y3;
+    recvData >> x3;
+    SF_LOG_DEBUG("network", "CMSG_PETBATTLE_REQUEST_WILD: x3(%f), y3(%f), z3(%f)", x3, y3, z3);
+
+    recvData.ReadGuidMask(TargetGUID, 0);
+    bool hasBattleFacing = !recvData.ReadBit(); // v10 == 0.0f
+    recvData.ReadGuidMask(TargetGUID, 6, 3, 5, 2, 7, 1, 4);
+    bool hasLocationResult = !recvData.ReadBit(); // *((_DWORD *)v2 + 6) == -1
+
+    recvData.ReadGuidBytes(TargetGUID, 3, 6, 5, 2, 7, 1, 0, 4);
+
+    if (hasBattleFacing)
+        recvData >> BattleFacing;
+
+    if (hasLocationResult)
+        recvData >> LocationResult;
+
+    SF_LOG_DEBUG("network", "CMSG_PETBATTLE_REQUEST_WILD: hasBattleFacing=(%u), hasLocationResult=(%u)", uint8(hasBattleFacing), uint8(hasLocationResult));
+    SF_LOG_DEBUG("network", "CMSG_PETBATTLE_REQUEST_WILD: BattleFacing=(%f), LocationResult=(%i)", BattleFacing, LocationResult);
+
+    Creature* unit = GetPlayer()->GetNPCIfCanInteractWith(TargetGUID, UNIT_NPC_FLAG_WILDPET_CAPTURABLE);
+    if (!unit)
+    {
+        SF_LOG_DEBUG("network", "WORLD: CMSG_PETBATTLE_REQUEST_WILD - Unit (GUID: %u) not found or you can not interact with him.", uint32(GUID_LOPART(TargetGUID)));
+        return;
+    }
+
+    // remove fake death
+    if (GetPlayer()->HasUnitState(UNIT_STATE_DIED))
+        GetPlayer()->RemoveAurasByType(SPELL_AURA_FEIGN_DEATH);
+
+/*  // PetBattleRequestResults
+    {
+        WorldPacket data2(SMSG_PETBATTLE_REQUEST_FAILED, 2);
+        data2.WriteBit(0); // unk
+        data2.FlushBits();
+        data2 << int8(0); // result
+        SendPacket(&data2);
+    }
+*/
+
+    WorldPacket data(SMSG_PETBATTLE_FINALIZE_LOCATION, 46);
+    data << x3; // 5
+    data << y3; // 6
+    //PLAYER1
+    data << y1;
+    data << z1;
+    data << x1;
+    //PLAYER2
+    data << y2;
+    data << z2;
+    data << x2;
+    data << z3; // 7
+    data.WriteBit(hasBattleFacing); // 8
+    data.WriteBit(LocationResult); // 4
+    data.FlushBits();
+    data << LocationResult;
+    data << BattleFacing;
+    SendPacket(&data);
+
+}
+
+void WorldSession::HandlePetBattleRequestUpdate(WorldPacket& recvData)
+{
+    ObjectGuid TargetGUID;
+    recvData.ReadGuidMask(TargetGUID, 4, 6, 7, 5);
+    bool Canceled = recvData.ReadBit();
+    recvData.ReadGuidMask(TargetGUID, 0, 2, 1, 3);
+    recvData.ReadGuidBytes(TargetGUID, 7, 1, 0, 5, 6, 2, 4, 3);
+    SF_LOG_DEBUG("network", "CMSG_PETBATTLE_REQUEST_UPDATE: Canceled=(%u), TargetGUID=(%u)", uint8(Canceled), uint32(GUID_LOPART(TargetGUID));
+
+    //TODO: Send SMSG_PETBATTLE_INITIAL_UPDATE 0x0E1E : 0x75ABD2
+}
