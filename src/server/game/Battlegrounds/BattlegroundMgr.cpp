@@ -386,7 +386,7 @@ void BattlegroundMgr::BuildPvpLogDataPacket(WorldPacket* data, Battleground* bg)
 
         data->WriteBit(playerGUID[6]);
         data->WriteBit(player->GetBGTeam() == HORDE ? 0 : 1);
-        data->WriteBit(0);              // Rating Change
+        data->WriteBit(isArena);              // Rating Change
         data->WriteBit(playerGUID[0]);
         data->WriteBit(0);              // MMR Change
         data->WriteBit(playerGUID[7]);
@@ -411,6 +411,10 @@ void BattlegroundMgr::BuildPvpLogDataPacket(WorldPacket* data, Battleground* bg)
         buff.WriteByteSeq(playerGUID[3]);
         buff << uint32(score->DamageDone);              // damage done
         buff << uint32(score->KillingBlows);
+
+        if (isArena)
+            buff << int32(score->RatingChange);
+
         buff.WriteByteSeq(playerGUID[1]);
         buff.WriteByteSeq(playerGUID[6]);
         buff.WriteByteSeq(playerGUID[7]);

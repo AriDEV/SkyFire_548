@@ -211,7 +211,8 @@ enum ScoreType
     SCORE_SECONDARY_OBJECTIVES  = 17,
     //SOTA
     SCORE_DESTROYED_DEMOLISHER  = 18,
-    SCORE_DESTROYED_WALL        = 19
+    SCORE_DESTROYED_WALL        = 19,
+    SCORE_RATING_CHANGE         = 20
 };
 
 
@@ -259,7 +260,7 @@ enum BGHonorMode
 struct BattlegroundScore
 {
     BattlegroundScore() : KillingBlows(0), Deaths(0), HonorableKills(0), BonusHonor(0),
-        DamageDone(0), HealingDone(0)
+        DamageDone(0), HealingDone(0), RatingChange(0)
     { }
 
     virtual ~BattlegroundScore() { }                        //virtual destructor is used when deleting score from scores map
@@ -270,6 +271,7 @@ struct BattlegroundScore
     uint32 BonusHonor;
     uint32 DamageDone;
     uint32 HealingDone;
+    int32 RatingChange;
 };
 
 #define BG_AWARD_ARENA_POINTS_MIN_LEVEL 71
@@ -453,7 +455,7 @@ class Battleground
         Group* GetBgRaid(uint32 TeamID) const { return TeamID == ALLIANCE ? m_BgRaids[TEAM_ALLIANCE] : m_BgRaids[TEAM_HORDE]; }
         void SetBgRaid(uint32 TeamID, Group* bg_raid);
 
-        virtual void UpdatePlayerScore(Player* player, uint32 type, uint32 value, bool doAddHonor = true);
+        virtual void UpdatePlayerScore(Player* player, uint32 type, int32 value, bool doAddHonor = true);
 
         static TeamId GetTeamIndexByTeamId(uint32 Team) { return Team == ALLIANCE ? TEAM_ALLIANCE : TEAM_HORDE; }
         uint32 GetPlayersCountByTeam(uint32 Team) const { return m_PlayersCount[GetTeamIndexByTeamId(Team)]; }

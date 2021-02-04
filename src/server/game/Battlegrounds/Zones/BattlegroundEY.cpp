@@ -812,7 +812,7 @@ void BattlegroundEY::EventPlayerCapturedFlag(Player* player, uint32 BgObjectType
     UpdatePlayerScore(player, SCORE_FLAG_CAPTURES, 1);
 }
 
-void BattlegroundEY::UpdatePlayerScore(Player* player, uint32 type, uint32 value, bool doAddHonor)
+void BattlegroundEY::UpdatePlayerScore(Player* player, uint32 type, int32 value, bool doAddHonor)
 {
     BattlegroundScoreMap::iterator itr = PlayerScores.find(player->GetGUID());
     if (itr == PlayerScores.end())                         // player not found

@@ -58,6 +58,6 @@ class BattlegroundTV : public Battleground
         void HandleKillPlayer(Player* player, Player* killer) OVERRIDE;
 
         /* Scorekeeping */
-        void UpdatePlayerScore(Player* Source, uint32 type, uint32 value, bool doAddHonor = true) OVERRIDE;
+        void UpdatePlayerScore(Player* Source, uint32 type, int32 value, bool doAddHonor = true) OVERRIDE;
 };
 #endif

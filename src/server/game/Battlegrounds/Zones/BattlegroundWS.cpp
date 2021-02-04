@@ -776,7 +776,7 @@ void BattlegroundWS::HandleKillPlayer(Player* player, Player* killer)
     Battleground::HandleKillPlayer(player, killer);
 }
 
-void BattlegroundWS::UpdatePlayerScore(Player* player, uint32 type, uint32 value, bool doAddHonor)
+void BattlegroundWS::UpdatePlayerScore(Player* player, uint32 type, int32 value, bool doAddHonor)
 {
     BattlegroundScoreMap::iterator itr = PlayerScores.find(player->GetGUID());
     if (itr == PlayerScores.end())                         // player not found

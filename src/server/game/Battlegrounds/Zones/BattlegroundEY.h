@@ -358,7 +358,7 @@ class BattlegroundEY : public Battleground
         void Reset() OVERRIDE;
         void UpdateTeamScore(uint32 Team);
         void EndBattleground(uint32 winner);
-        void UpdatePlayerScore(Player* Source, uint32 type, uint32 value, bool doAddHonor = true) OVERRIDE;
+        void UpdatePlayerScore(Player* Source, uint32 type, int32 value, bool doAddHonor = true) OVERRIDE;
         void FillInitialWorldStates(WorldStateBuilder& builder) OVERRIDE;
         void SetDroppedFlagGUID(uint64 guid, int32 /*TeamID*/ = -1) OVERRIDE { m_DroppedFlagGUID = guid;}
         uint64 GetDroppedFlagGUID() const           { return m_DroppedFlagGUID;}

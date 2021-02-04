@@ -851,7 +851,7 @@ void BattlegroundTP::HandleKillPlayer(Player *player, Player *killer)
 }
 
 
-void BattlegroundTP::UpdatePlayerScore(Player* Source, uint32 type, uint32 value, bool doAddHonor)
+void BattlegroundTP::UpdatePlayerScore(Player* Source, uint32 type, int32 value, bool doAddHonor)
 {
     BattlegroundScoreMap::iterator itr = PlayerScores.find(Source->GetGUID());
     if (itr == PlayerScores.end())                         // player not found

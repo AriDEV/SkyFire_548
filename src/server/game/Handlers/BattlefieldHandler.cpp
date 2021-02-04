@@ -319,14 +319,16 @@ void WorldSession::HandleBattlefieldRatedInfoRequest(WorldPacket& recvData)
     for (uint8 i = 0; i < 4; i++)
     {
         //TODO: PLAYER_FIELD_PVP_INFO, Updatefield Data 8*3 = size 24
-        data << uint32(0);
-        data << uint32(0);
-        data << uint32(0);
-        data << uint32(0);
-        data << uint32(0);
-        data << uint32(0);
-        data << uint32(0);
-        data << uint32(0);
+        data << uint32(0); // FAKE?
+        data << uint32(0); // FAKE?
+        data << uint32(_player->GetUInt32Value(PLAYER_FIELD_PVP_INFO + (8 * i) + ARENA_TEAM_GAMES_SEASON)); // SeasonPlayed
+        data << uint32(_player->GetUInt32Value(PLAYER_FIELD_PVP_INFO + (8 * i) + ARENA_TEAM_PERSONAL_RATING)); // CurrentRating
+
+        data << uint32(_player->GetUInt32Value(PLAYER_FIELD_PVP_INFO + (8 * i) + ARENA_TEAM_GAMES_WEEK)); // WeeklyWins
+        data << uint32(_player->GetUInt32Value(PLAYER_FIELD_PVP_INFO + (8 * i) + ARENA_TEAM_PERSONAL_RATING)); //BestWeeklyRating
+
+        data << uint32(_player->GetUInt32Value(PLAYER_FIELD_PVP_INFO + (8 * i) + ARENA_TEAM_GAMES_WEEK)); //WeeklyPlayed
+        data << uint32(_player->GetUInt32Value(PLAYER_FIELD_PVP_INFO + (8 * i) + ARENA_TEAM_PERSONAL_RATING)); //BestSeasonRating
     }
     SendPacket(&data);
 }

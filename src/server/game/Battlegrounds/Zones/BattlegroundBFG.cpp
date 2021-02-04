@@ -678,7 +678,7 @@ WorldSafeLocsEntry const* BattlegroundBFG::GetClosestGraveYard(Player* player)
     return sWorldSafeLocsStore.LookupEntry(team == ALLIANCE ? GILNEAS_EXPLOIT_TELEPORT_LOCATION_ALLIANCE : GILNEAS_EXPLOIT_TELEPORT_LOCATION_HORDE);
 }*/
 
-void BattlegroundBFG::UpdatePlayerScore(Player* Source, uint32 type, uint32 value, bool doAddHonor)
+void BattlegroundBFG::UpdatePlayerScore(Player* Source, uint32 type, int32 value, bool doAddHonor)
 {
     BattlegroundScoreMap::iterator itr = PlayerScores.find(Source->GetGUID());
     if (itr == PlayerScores.end())                         // player not found...

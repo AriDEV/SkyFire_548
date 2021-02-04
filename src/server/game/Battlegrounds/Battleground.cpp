@@ -808,8 +808,6 @@ void Battleground::EndBattleground(uint32 winner)
     }
 
     bool guildAwarded = false;
-    WorldPacket pvpLogData;
-    sBattlegroundMgr->BuildPvpLogDataPacket(&pvpLogData, this);
 
     BattlegroundQueueTypeId bgQueueTypeId = BattlegroundMgr::BGQueueTypeId(GetTypeID(), GetArenaType());
 
@@ -866,10 +864,12 @@ void Battleground::EndBattleground(uint32 winner)
                 player->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_WIN_ARENA, GetMapId());
                 player->ModifyCurrency(CURRENCY_TYPE_CONQUEST_META_ARENA, sWorld->getIntConfig(WorldIntConfigs::CONFIG_CURRENCY_CONQUEST_POINTS_ARENA_REWARD));
 
+                UpdatePlayerScore(player, SCORE_RATING_CHANGE, winnerChange, false);
                 winnerArenaTeam->MemberWon(player, loserMatchmakerRating, winnerMatchmakerChange);
             }
             else
             {
+                UpdatePlayerScore(player, SCORE_RATING_CHANGE, loserChange, false);
                 loserArenaTeam->MemberLost(player, winnerMatchmakerRating, loserMatchmakerChange);
 
                 // Arena lost => reset the win_rated_arena having the "no_lose" condition
@@ -924,6 +924,8 @@ void Battleground::EndBattleground(uint32 winner)
 
         BlockMovement(player);
 
+        WorldPacket pvpLogData;
+        sBattlegroundMgr->BuildPvpLogDataPacket(&pvpLogData, this);
         player->SendDirectMessage(&pvpLogData);
 
         WorldPacket data;
@@ -1384,7 +1386,7 @@ bool Battleground::HasFreeSlots() const
     return GetPlayersSize() < GetMaxPlayers();
 }
 
-void Battleground::UpdatePlayerScore(Player* Source, uint32 type, uint32 value, bool doAddHonor)
+void Battleground::UpdatePlayerScore(Player* Source, uint32 type, int32 value, bool doAddHonor)
 {
     //this procedure is called from virtual function implemented in bg subclass
     BattlegroundScoreMap::const_iterator itr = PlayerScores.find(Source->GetGUID());
@@ -1419,6 +1421,9 @@ void Battleground::UpdatePlayerScore(Player* Source, uint32 type, uint32 value, 
             break;
         case SCORE_HEALING_DONE:                            // Healing Done
             itr->second->HealingDone += value;
+            break;
+        case SCORE_RATING_CHANGE:
+            itr->second->RatingChange += value;
             break;
         default:
             SF_LOG_ERROR("bg.battleground", "Battleground::UpdatePlayerScore: unknown score type (%u) for BG (map: %u, instance id: %u)!",

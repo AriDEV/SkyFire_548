@@ -215,7 +215,7 @@ class BattlegroundTP : public Battleground
         void UpdateFlagState(uint32 team, uint32 value);
         void SetLastFlagCapture(uint32 team)                { _lastFlagCaptureTeam = team; }
         void UpdateTeamScore(uint32 team);
-        void UpdatePlayerScore(Player* Source, uint32 type, uint32 value, bool doAddHonor = true) OVERRIDE;
+        void UpdatePlayerScore(Player* Source, uint32 type, int32 value, bool doAddHonor = true) OVERRIDE;
         void SetDroppedFlagGUID(uint64 guid, int32 team = -1) OVERRIDE
         {
             if (team == TEAM_ALLIANCE || team == TEAM_HORDE)
