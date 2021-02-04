@@ -113,3 +113,17 @@ void ArenaTeamMgr::LoadArenaTeams()
     SF_LOG_INFO("server.loading", ">> Loaded %u arena teams in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
 }
 
+ArenaTeam* ArenaTeamMgr::GetArenaTeamByName(const std::string& arenaTeamName) const
+{
+    std::string search = arenaTeamName;
+    std::transform(search.begin(), search.end(), search.begin(), ::toupper);
+    for (ArenaTeamContainer::const_iterator itr = ArenaTeamStore.begin(); itr != ArenaTeamStore.end(); ++itr)
+    {
+        std::string teamName = itr->second->GetName();
+        std::transform(teamName.begin(), teamName.end(), teamName.begin(), ::toupper);
+        if (search == teamName)
+            return itr->second;
+    }
+    return NULL;
+}
+

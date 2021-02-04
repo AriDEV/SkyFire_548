@@ -32,6 +32,7 @@ public:
     typedef UNORDERED_MAP<uint32, ArenaTeam*> ArenaTeamContainer;
 
     ArenaTeam* GetArenaTeamById(uint32 arenaTeamId) const;
+    ArenaTeam* GetArenaTeamByName(const std::string& arenaTeamName) const;
 
     void AddArenaTeam(ArenaTeam* arenaTeam);
     void RemoveArenaTeam(uint32 Id);
@@ -42,6 +43,7 @@ public:
     uint32 GenerateArenaTeamId();
     void LoadArenaTeams();
     void SetNextArenaTeamId(uint32 Id) { NextArenaTeamId = Id; }
+
 
 protected:
     uint32 NextArenaTeamId;

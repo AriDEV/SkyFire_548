@@ -49,11 +49,11 @@ bool ArenaTeam::Create(uint64 captainGuid, uint8 type, std::string const& arenaT
     // Check if captain is present
     if (!ObjectAccessor::FindPlayer(captainGuid))
         return false;
-    /*
+    
     // Check if arena team name is already taken
     if (sArenaTeamMgr->GetArenaTeamByName(arenaTeamName))
         return false;
-*/
+
     // Generate new arena team id
     TeamId = sArenaTeamMgr->GenerateArenaTeamId();
 
