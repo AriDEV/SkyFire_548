@@ -40,6 +40,7 @@ public:
     {
         static std::vector<ChatCommand> arenaCommandTable =
         {
+            { "invite", rbac::RBAC_PERM_COMMAND_ARENA_INVITE,    true, &HandleArenaInviteCommand, "", },
             { "create",  rbac::RBAC_PERM_COMMAND_ARENA_CREATE,   true, &HandleArenaCreateCommand,  "", },
             { "disband", rbac::RBAC_PERM_COMMAND_ARENA_DISBAND,  true, &HandleArenaDisbandCommand, "", },
             //{ "rename",  rbac::RBAC_PERM_COMMAND_ARENA_RENAME,   true, &HandleArenaRenameCommand,  "", },
@@ -54,8 +55,40 @@ public:
         return commandTable;
     }
 
+    static bool HandleArenaInviteCommand(ChatHandler* handler, char const* args)
+    {
+        // .arena invite playername teamid
+        if (!*args)
+            return false;
+
+        Player* target;
+        if (!handler->extractPlayerTarget(*args != '"' ? (char*)args : NULL, &target))
+            return false;
+
+        char* typeStr = strtok(NULL, "");
+        if (!typeStr)
+            return false;
+
+        uint32 teamId = atoi(typeStr);
+        if (!teamId)
+            return false;
+
+        ArenaTeam* arenaTeam = sArenaTeamMgr->GetArenaTeamById(teamId);
+        if (!arenaTeam)
+            return false;
+
+        // Add player to team
+        if (!arenaTeam->AddMember(target->GetGUID()))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     static bool HandleArenaCreateCommand(ChatHandler* handler, char const* args)
     {
+        // .arena create "ArenaTeamName" slot // slot is type of arena = 2-3-5
         if (!*args)
             return false;
 
@@ -64,7 +97,7 @@ public:
             return false;
 
         char* tailStr = *args != '"' ? strtok(NULL, "") : (char*)args;
-        if (!tailStr)
+        if (!tailStr)           
             return false;
 
         char* name = handler->extractQuotedArg(tailStr);
